@@ -1,0 +1,13 @@
+{
+    "projectEnv": "development",
+    "appName": "serve-nt",
+    "appURI": "https://github.com/qawarrior/serve-nt",
+    "version": "v0.0.1-alpha",
+    "server": {
+        "address": "127.0.0.1:8001"
+    },
+    "data": {
+        "uri": "mongodb://localhost",
+        "dbName": "serve-nt"
+    }
+}
