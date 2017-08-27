@@ -7,7 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Servent represents the user of the playlister web application
+// Servent the person that can take on an event to complete
 type Servent struct {
 	ID bson.ObjectId `json:"id"  bson:"_id"`
 }

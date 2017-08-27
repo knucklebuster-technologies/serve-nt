@@ -7,7 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Event represents the user of the playlister web application
+// Event data related to a single thing needing to take place
 type Event struct {
 	ID          bson.ObjectId `json:"id"  bson:"_id"`
 	Title       string        `json:"title"  bson:"title"`

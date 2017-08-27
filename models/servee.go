@@ -7,7 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Servee represents the user of the playlister web application
+// Servee the one posting an event that needs to be filled
 type Servee struct {
 	ID bson.ObjectId `json:"id"  bson:"_id"`
 }
