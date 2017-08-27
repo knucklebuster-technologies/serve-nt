@@ -1,0 +1,27 @@
+package models
+
+import (
+	"encoding/json"
+	"io"
+
+	"gopkg.in/mgo.v2/bson"
+)
+
+// Event represents the user of the playlister web application
+type Event struct {
+	ID          bson.ObjectId `json:"id"  bson:"_id"`
+	Title       string        `json:"title"  bson:"title"`
+	Description string        `json:"description"  bson:"description"`
+	ServeeID    bson.ObjectId `json:"serveeid" bson:"servee_id"`
+	ServentID   bson.ObjectId `json:"serventid" bson:"servent_id"`
+}
+
+// Encode writes the structs value to a stream
+func (a *Event) Encode(w io.Writer) error {
+	return json.NewEncoder(w).Encode(a)
+}
+
+// Decode reads a stream and assigns values to the structs properties
+func (a *Event) Decode(r io.Reader) error {
+	return json.NewDecoder(r).Decode(a)
+}
