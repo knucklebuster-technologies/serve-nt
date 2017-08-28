@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/qawarrior/serve-nt/loggy"
 )
 
 // Event represents the controller for operating on the User resource
@@ -18,7 +21,7 @@ type Event struct {
 // NewEvent returns a controller for the User Endpoint
 func NewEvent(d *mgo.Database) (*Event, error) {
 	index := mgo.Index{
-		Key:        []string{"_id", "title"},
+		Key:        []string{"title"},
 		Unique:     true,
 		DropDups:   true,
 		Background: true,
@@ -34,9 +37,11 @@ func NewEvent(d *mgo.Database) (*Event, error) {
 
 // Create adds a new Event
 func (c Event) Create(w http.ResponseWriter, r *http.Request) {
+	loggy.Info.Println("Event.Create HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
+		loggy.Error.Println(err.Error())
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -44,27 +49,70 @@ func (c Event) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.ID = bson.NewObjectId()
-	c.collection.Insert(&m)
+	if m.ServeeID == "" {
+		m.ServeeID = "000000000000000000000000"
+	}
+	if m.ServentID == "" {
+		m.ServentID = "000000000000000000000000"
+	}
+
+	err = c.collection.Insert(&m)
+	if err != nil {
+		loggy.Error.Println(err.Error())
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
 	m.Encode(w)
 }
 
-// Read returns an existing Event
+// Read returns all existing Events
 func (c Event) Read(w http.ResponseWriter, r *http.Request) {
-	m := models.Event{}
-	if err := c.collection.Find(bson.M{}).One(&m); err != nil {
-		w.WriteHeader(404)
+	loggy.Info.Println("Event.Read HANDLER CALLED")
+	m := []models.Event{}
+	err := c.collection.Find(bson.M{}).All(&m)
+	if err != nil {
+		loggy.Error.Println(err.Error())
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	m.Encode(w)
+	json.NewEncoder(w).Encode(m)
+}
+
+// ReadTitle returns the Events with the specified Tile
+func (c Event) ReadTitle(w http.ResponseWriter, r *http.Request) {
+	loggy.Info.Println("Event.ReadTitle HANDLER CALLED")
+	m := []models.Event{}
+
+	vars := mux.Vars(r)
+	title := vars["title"]
+
+	err := c.collection.Find(bson.M{"title": title}).All(&m)
+	if err != nil {
+		loggy.Error.Println(err.Error())
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(m)
 }
 
 // Update modifies an existing Event
 func (c Event) Update(w http.ResponseWriter, r *http.Request) {
+	loggy.Info.Println("Event.Update HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
@@ -78,6 +126,7 @@ func (c Event) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete removes an existing Event
 func (c Event) Delete(w http.ResponseWriter, r *http.Request) {
+	loggy.Info.Println("Event.Delete HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
@@ -86,6 +135,7 @@ func (c Event) Delete(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err)
 		return
 	}
+
 	ci, err := c.collection.RemoveAll(bson.M{})
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

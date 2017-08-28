@@ -34,7 +34,7 @@ func NewServee(d *mgo.Database) (*Servee, error) {
 
 // Create adds a new Servee
 func (c Servee) Create(w http.ResponseWriter, r *http.Request) {
-	m := models.Event{}
+	m := models.Servee{}
 	err := m.Decode(r.Body)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

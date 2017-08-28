@@ -11,8 +11,9 @@ func servee(dbname string, db *mgo.Session, router *mux.Router) {
 	if err != nil {
 		return
 	}
-	router.HandleFunc("/v1/servee", c.Create).Methods("POST")
-	router.HandleFunc("/v1/servee", c.Read).Methods("GET")
-	router.HandleFunc("/v1/servee", c.Update).Methods("PUT")
-	router.HandleFunc("/vi/servee", c.Delete).Methods("DELETE")
+	resource := "/servees"
+	router.HandleFunc(resource, c.Create).Methods("POST")
+	router.HandleFunc(resource, c.Read).Methods("GET")
+	router.HandleFunc(resource, c.Update).Methods("PUT")
+	router.HandleFunc(resource, c.Delete).Methods("DELETE")
 }

@@ -12,8 +12,8 @@ type Event struct {
 	ID          bson.ObjectId `json:"id"  bson:"_id"`
 	Title       string        `json:"title"  bson:"title"`
 	Description string        `json:"description"  bson:"description"`
-	ServeeID    bson.ObjectId `json:"serveeid" bson:"servee_id"`
-	ServentID   bson.ObjectId `json:"serventid" bson:"servent_id"`
+	ServeeID    string        `json:"serveeid" bson:"servee_id"`
+	ServentID   string        `json:"serventid" bson:"servent_id"`
 }
 
 // Encode writes the structs value to a stream
