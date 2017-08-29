@@ -1,10 +1,12 @@
-hash: a7da01c2ec36f3dd540b9cd61c6ada44bd00a06f293246ad657ce9390ee627b3
-updated: 2017-08-29T11:35:02.7497319-07:00
+hash: 7f6d51df99808a9b3fc5b8ed86c5d1af76c70119896854900bef1defb10d2f63
+updated: 2017-08-29T11:39:31.0817901-07:00
 imports:
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: bcd8bc72b08df0f70df986b97f95590779502d31
+- name: github.com/logrusorgru/aurora
+  version: b9c3722b64a1976e0624448ee7f5a0744b8cf629
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: gopkg.in/mgo.v2
