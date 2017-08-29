@@ -1,0 +1,9 @@
+package: github.com/qawarrior/serve-nt
+import:
+- package: github.com/gorilla/mux
+  version: ~1.4.0
+- package: github.com/pkg/errors
+  version: ~0.8.0
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
