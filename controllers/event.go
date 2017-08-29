@@ -20,6 +20,7 @@ type Event struct {
 
 // NewEvent returns a controller for the User Endpoint
 func NewEvent(d *mgo.Database) (*Event, error) {
+	loggy.Info("NEW EVENT CONTROLLER BEING CREATED")
 	index := mgo.Index{
 		Key:        []string{"title"},
 		Unique:     true,
@@ -30,6 +31,7 @@ func NewEvent(d *mgo.Database) (*Event, error) {
 	c := d.C("events")
 	err := c.EnsureIndex(index)
 	if err != nil {
+		loggy.Error(err)
 		return nil, err
 	}
 	return &Event{c}, nil
@@ -37,11 +39,11 @@ func NewEvent(d *mgo.Database) (*Event, error) {
 
 // Create adds a new Event
 func (c Event) Create(w http.ResponseWriter, r *http.Request) {
-	loggy.Info.Println("Event.Create HANDLER CALLED")
+	loggy.Info("Event.Create HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
-		loggy.Error.Println(err.Error())
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -58,7 +60,7 @@ func (c Event) Create(w http.ResponseWriter, r *http.Request) {
 
 	err = c.collection.Insert(&m)
 	if err != nil {
-		loggy.Error.Println(err.Error())
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -72,11 +74,11 @@ func (c Event) Create(w http.ResponseWriter, r *http.Request) {
 
 // Read returns all existing Events
 func (c Event) Read(w http.ResponseWriter, r *http.Request) {
-	loggy.Info.Println("Event.Read HANDLER CALLED")
+	loggy.Info("Event.Read HANDLER CALLED")
 	m := []models.Event{}
 	err := c.collection.Find(bson.M{}).All(&m)
 	if err != nil {
-		loggy.Error.Println(err.Error())
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -90,7 +92,7 @@ func (c Event) Read(w http.ResponseWriter, r *http.Request) {
 
 // ReadTitle returns the Events with the specified Tile
 func (c Event) ReadTitle(w http.ResponseWriter, r *http.Request) {
-	loggy.Info.Println("Event.ReadTitle HANDLER CALLED")
+	loggy.Info("Event.ReadTitle HANDLER CALLED")
 	m := []models.Event{}
 
 	vars := mux.Vars(r)
@@ -98,7 +100,7 @@ func (c Event) ReadTitle(w http.ResponseWriter, r *http.Request) {
 
 	err := c.collection.Find(bson.M{"title": title}).All(&m)
 	if err != nil {
-		loggy.Error.Println(err.Error())
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -112,10 +114,11 @@ func (c Event) ReadTitle(w http.ResponseWriter, r *http.Request) {
 
 // Update modifies an existing Event
 func (c Event) Update(w http.ResponseWriter, r *http.Request) {
-	loggy.Info.Println("Event.Update HANDLER CALLED")
+	loggy.Info("Event.Update HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -126,10 +129,11 @@ func (c Event) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete removes an existing Event
 func (c Event) Delete(w http.ResponseWriter, r *http.Request) {
-	loggy.Info.Println("Event.Delete HANDLER CALLED")
+	loggy.Info("Event.Delete HANDLER CALLED")
 	m := models.Event{}
 	err := m.Decode(r.Body)
 	if err != nil {
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)
@@ -138,6 +142,7 @@ func (c Event) Delete(w http.ResponseWriter, r *http.Request) {
 
 	ci, err := c.collection.RemoveAll(bson.M{})
 	if err != nil {
+		loggy.Error(err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(err)

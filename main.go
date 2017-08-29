@@ -11,23 +11,23 @@ import (
 )
 
 func main() {
-	loggy.Info.Println("STARTING MAIN")
+	loggy.Info("STARTING MAIN")
 
-	loggy.Info.Println("GETTING WORKING DIRECTORY")
+	loggy.Info("GETTING WORKING DIRECTORY")
 	wdir, err := os.Getwd()
 	if err != nil {
 		loggy.Fatal(err)
 	}
-	loggy.Info.Println("WORKING DIRECTORY:", wdir)
+	loggy.Info("WORKING DIRECTORY:", wdir)
 
-	loggy.Info.Println("READING CONFIGURATION")
+	loggy.Info("READING CONFIGURATION")
 	config := config.Config{}
 	err = config.Read(wdir + `\config.json`)
 	if err != nil {
 		loggy.Fatal(err)
 	}
 
-	loggy.Info.Println("STARTING DATABASE SERVER")
+	loggy.Info("STARTING DATABASE SERVER")
 	dbsrv := database.NewServer(wdir + `\db`)
 	err = dbsrv.Start()
 	if err != nil {
@@ -35,20 +35,20 @@ func main() {
 	}
 	defer dbsrv.Stop()
 
-	loggy.Info.Println("CREATING DATABASE SESSION")
+	loggy.Info("CREATING DATABASE SESSION")
 	err = dbsrv.Connect(config.Data.URI)
 	if err != nil {
 		loggy.Fatal(err)
 	}
 	defer dbsrv.Session.Close()
 
-	loggy.Info.Println("SETTING UP ROUTING")
+	loggy.Info("SETTING UP ROUTING")
 	router, err := routes.Set(config.Data.DbName, dbsrv.Session)
 	if err != nil {
 		loggy.Fatal(err)
 	}
 
-	loggy.Info.Println("STARTING SERVER @ " + config.Server.Address)
+	loggy.Info("STARTING SERVER @ " + config.Server.Address)
 	webserver.Start(config.Server.Address, router)
 	defer webserver.Stop()
 }
