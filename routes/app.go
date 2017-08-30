@@ -17,6 +17,9 @@ func app(router *mux.Router) {
 	// login routes
 	router.HandleFunc("/login", loginGet).Methods("GET")
 	router.HandleFunc("/login", loginPost).Methods("POST")
+
+	// asset routes
+	router.HandleFunc("/assets/css/{file}", cssGet).Methods("GET")
 }
 
 // index handlers
@@ -35,6 +38,14 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 	loggy.Info("HANDLER Routes.loginPost CALLED")
 	r.ParseForm()
 	loggy.Info(r.Form)
+}
+
+// asset handlers
+func cssGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER routes.cssGet CALLED")
+	path := "." + r.URL.Path
+	loggy.Info("CSS PATH REQUESTED: " + path)
+	http.ServeFile(w, r, path)
 }
 
 // Serve pages
