@@ -17,15 +17,9 @@ type Servee struct {
 
 // NewServee returns a controller for the User Endpoint
 func NewServee(d *mgo.Database) (*Servee, error) {
-	index := mgo.Index{
-		Key:        []string{"_id", "email", "cert_id"},
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
-		Sparse:     true,
-	}
 	c := d.C("servees")
-	err := c.EnsureIndex(index)
+	i := newIndex([]string{"username", "password"})
+	err := c.EnsureIndex(i)
 	if err != nil {
 		return nil, err
 	}

@@ -21,15 +21,9 @@ type Event struct {
 // NewEvent returns a controller for the User Endpoint
 func NewEvent(d *mgo.Database) (*Event, error) {
 	loggy.Info("NEW EVENT CONTROLLER BEING CREATED")
-	index := mgo.Index{
-		Key:        []string{"title"},
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
-		Sparse:     true,
-	}
 	c := d.C("events")
-	err := c.EnsureIndex(index)
+	i := newIndex([]string{"title", "servee_id"})
+	err := c.EnsureIndex(i)
 	if err != nil {
 		loggy.Error(err)
 		return nil, err

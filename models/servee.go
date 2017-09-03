@@ -3,13 +3,11 @@ package models
 import (
 	"encoding/json"
 	"io"
-
-	"gopkg.in/mgo.v2/bson"
 )
 
 // Servee the one posting an event that needs to be filled
 type Servee struct {
-	ID bson.ObjectId `json:"id"  bson:"_id"`
+	user
 }
 
 // Encode writes the structs value to a stream

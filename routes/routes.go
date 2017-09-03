@@ -18,6 +18,6 @@ func Set(dbname string, db *mgo.Session) (*mux.Router, error) {
 	event(dbname, db, apiRouter)
 
 	// setup page routes
-	app(router)
+	application(router)
 	return router, nil
 }

@@ -17,15 +17,9 @@ type Servent struct {
 
 // NewServent returns a controller for the User Endpoint
 func NewServent(d *mgo.Database) (*Servent, error) {
-	index := mgo.Index{
-		Key:        []string{},
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
-		Sparse:     true,
-	}
 	c := d.C("servents")
-	err := c.EnsureIndex(index)
+	i := newIndex([]string{"username", "password"})
+	err := c.EnsureIndex(i)
 	if err != nil {
 		return nil, err
 	}
