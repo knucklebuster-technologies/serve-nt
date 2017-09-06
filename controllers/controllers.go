@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"gopkg.in/mgo.v2"
@@ -23,4 +24,10 @@ func newIndex(k []string) mgo.Index {
 		Sparse:     true,
 	}
 	return i
+}
+
+func sendfourOhFour(w http.ResponseWriter, err error) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	json.NewEncoder(w).Encode(err)
 }

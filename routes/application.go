@@ -11,7 +11,7 @@ import (
 	"github.com/qawarrior/serve-nt/loggy"
 )
 
-var queryValue = time.Now().String
+var queryValue = time.Now().String()
 
 func application(router *mux.Router) {
 	// index routes
@@ -33,13 +33,13 @@ func application(router *mux.Router) {
 // index handlers
 func indexGet(w http.ResponseWriter, r *http.Request) {
 	loggy.Info("HANDLER Routes.indexGet CALLED")
-	serveTemplate("./assets/templates/index.gohtml", queryValue, w)
+	serveTemplate("./assets/templates/index.html", queryValue, w)
 }
 
 // login handlers
 func loginGet(w http.ResponseWriter, r *http.Request) {
 	loggy.Info("HANDLER Routes.loginGet CALLED")
-	serveTemplate("./assets/templates/index.html", queryValue, w)
+	serveTemplate("./assets/templates/login.html", queryValue, w)
 }
 
 func loginPost(w http.ResponseWriter, r *http.Request) {
@@ -50,8 +50,8 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 
 // registration handlers
 func registrationGet(w http.ResponseWriter, r *http.Request) {
-	loggy.Info("HANDLER Routes.registrationPost CALLED")
-	serveTemplate("./assets/templates/registration.gohtml", queryValue, w)
+	loggy.Info("HANDLER Routes.registrationGet CALLED")
+	serveTemplate("./assets/templates/register.html", queryValue, w)
 }
 
 func registrationPost(w http.ResponseWriter, r *http.Request) {

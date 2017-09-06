@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -31,9 +33,7 @@ func (c Servee) Create(w http.ResponseWriter, r *http.Request) {
 	m := models.Servee{}
 	err := m.Decode(r.Body)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(400)
-		json.NewEncoder(w).Encode(err)
+		sendfourOhFour(w, err)
 		return
 	}
 
@@ -47,8 +47,26 @@ func (c Servee) Create(w http.ResponseWriter, r *http.Request) {
 // Read returns an existing Servee
 func (c Servee) Read(w http.ResponseWriter, r *http.Request) {
 	m := models.Servee{}
-	if err := c.collection.Find(bson.M{}).One(&m); err != nil {
-		w.WriteHeader(404)
+	if r.Method == "POST" {
+		err := r.ParseForm()
+		if err != nil {
+			sendfourOhFour(w, err)
+			return
+		}
+		u := r.Form.Get("username")
+		p := r.Form.Get("password")
+		err = c.collection.Find(bson.M{"username": u, "password": p}).One(&m)
+		if err != nil {
+			sendfourOhFour(w, err)
+			return
+		}
+	}
+
+	v := mux.Vars(r)
+	id := v["id"]
+	err := c.collection.Find(bson.M{"_id": id}).One(&m)
+	if err != nil {
+		sendfourOhFour(w, err)
 		return
 	}
 
@@ -62,9 +80,7 @@ func (c Servee) Update(w http.ResponseWriter, r *http.Request) {
 	m := models.Servee{}
 	err := m.Decode(r.Body)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(400)
-		json.NewEncoder(w).Encode(err)
+		sendfourOhFour(w, err)
 		return
 	}
 	m.Encode(w)
