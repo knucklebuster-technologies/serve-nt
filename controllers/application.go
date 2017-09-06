@@ -2,49 +2,88 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"html/template"
+	"io"
 	"net/http"
+	"time"
 
-	"github.com/qawarrior/serve-nt/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/qawarrior/serve-nt/loggy"
 )
 
-// Application represents the controller for operating on the User resource
+// Application represents the controller for operating on the application pages
 type Application struct {
-	collection *mgo.Collection
 }
 
-// NewApplication returns a controller for the User Endpoint
-func NewApplication(d *mgo.Database) (*Application, error) {
-	index := mgo.Index{
-		Key:        []string{},
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
-		Sparse:     true,
-	}
-	c := d.C("applications")
-	err := c.EnsureIndex(index)
-	if err != nil {
-		return nil, err
-	}
-	return &Application{c}, nil
+// NewApplication returns a controller for the Application pages
+func NewApplication() (*Application, error) {
+	loggy.Info("NEW Application CONTROLLER BEING CREATED")
+	return &Application{}, nil
 }
 
-// Create adds a new Application
-func (c Application) Create(w http.ResponseWriter, r *http.Request) {
-	m := models.Application{}
-	err := m.Decode(r.Body)
+// index handlers
+
+// IndexGet handles serving the index.html template
+func (c Application) IndexGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.IndexGet CALLED")
+	serveTemplate("./assets/templates/index.html", time.Now().String(), w)
+}
+
+// login handlers
+
+// LoginGet handles serving the login.html template
+func (c Application) LoginGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.loginGet CALLED")
+	serveTemplate("./assets/templates/login.html", time.Now().String(), w)
+}
+
+// LoginPost handles the submitted form data
+func (c Application) LoginPost(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.loginPost CALLED")
+	r.ParseForm()
+	loggy.Info(r.Form)
+	json.NewEncoder(w).Encode(r.Form)
+}
+
+// registration handlers
+
+// RegisterGet handles serving the register.html template
+func (c Application) RegisterGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.RegisterGet CALLED")
+	serveTemplate("./assets/templates/register.html", time.Now().String(), w)
+}
+
+// RegisterPost handles the submitted form data
+func (c Application) RegisterPost(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.RegisterPost CALLED")
+	r.ParseForm()
+	loggy.Info(r.Form)
+	json.NewEncoder(w).Encode(r.Form)
+}
+
+// asset handlers
+
+// CSSGet handles serving style sheets
+func (c Application) CSSGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.CSSGet CALLED")
+	path := "." + r.URL.Path
+	http.ServeFile(w, r, path)
+}
+
+// JSGet handles serving javascripts
+func (c Application) JSGet(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Application.JSGet CALLED")
+	path := "." + r.URL.Path
+	http.ServeFile(w, r, path)
+}
+
+// Serve pages
+func serveTemplate(t string, d interface{}, w io.Writer) {
+	pt, err := template.ParseFiles(t)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(400)
-		json.NewEncoder(w).Encode(err)
+		loggy.Error(err.Error())
+		fmt.Fprintln(w, err)
 		return
 	}
-
-	m.ID = bson.NewObjectId()
-	c.collection.Insert(&m)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
-	m.Encode(w)
+	pt.Execute(w, d)
 }

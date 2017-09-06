@@ -1,5 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 .heading {
+    border: 10px solid black;
     text-align: center;
 }
 
