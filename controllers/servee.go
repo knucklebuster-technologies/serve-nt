@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/qawarrior/serve-nt/loggy"
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -19,6 +20,7 @@ type Servee struct {
 
 // NewServee returns a controller for the User Endpoint
 func NewServee(d *mgo.Database) (*Servee, error) {
+	loggy.Info("CREATING Servee CONTROLLER")
 	c := d.C("servees")
 	i := newIndex([]string{"username", "password"})
 	err := c.EnsureIndex(i)

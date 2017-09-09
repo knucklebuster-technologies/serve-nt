@@ -17,7 +17,7 @@ type Application struct {
 
 // NewApplication returns a controller for the Application pages
 func NewApplication() (*Application, error) {
-	loggy.Info("NEW Application CONTROLLER BEING CREATED")
+	loggy.Info("CREATING Application CONTROLLER")
 	return &Application{}, nil
 }
 

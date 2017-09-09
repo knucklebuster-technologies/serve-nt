@@ -6,7 +6,7 @@ import (
 )
 
 func application(router *mux.Router) {
-	c := controllers.Application{}
+	c, _ := controllers.NewApplication()
 	// index routes
 	router.HandleFunc("/", c.IndexGet).Methods("GET")
 

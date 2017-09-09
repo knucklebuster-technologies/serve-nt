@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/qawarrior/serve-nt/loggy"
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -17,6 +18,7 @@ type Servent struct {
 
 // NewServent returns a controller for the User Endpoint
 func NewServent(d *mgo.Database) (*Servent, error) {
+	loggy.Info("CREATING Servent CONTROLLER")
 	c := d.C("servents")
 	i := newIndex([]string{"username", "password"})
 	err := c.EnsureIndex(i)
