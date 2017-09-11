@@ -1,13 +1,14 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 
-	"github.com/qawarrior/serve-nt/config"
-	"github.com/qawarrior/serve-nt/database"
-	"github.com/qawarrior/serve-nt/loggy"
+	"github.com/qawarrior/loggy"
 	"github.com/qawarrior/serve-nt/routes"
-	"github.com/qawarrior/serve-nt/webserver"
+	"github.com/qawarrior/srvcontrol"
+	mgo "gopkg.in/mgo.v2"
 )
 
 func main() {
@@ -21,34 +22,58 @@ func main() {
 	loggy.Info("WORKING DIRECTORY:", wdir)
 
 	loggy.Info("READING CONFIGURATION")
-	config := config.Config{}
-	err = config.Read(wdir + `\config.json`)
+	config, err := readConfiguration(wdir + `\config.json`)
 	if err != nil {
 		loggy.Fatal(err)
 	}
 
 	loggy.Info("STARTING DATABASE SERVER")
-	dbsrv := database.NewServer(wdir + `\db`)
-	err = dbsrv.Start()
+	err = srvcontrol.StartDataSrvr(wdir + `\datastore`)
 	if err != nil {
 		loggy.Fatal(err)
 	}
-	defer dbsrv.Stop()
+	defer srvcontrol.StopDataSrvr()
 
 	loggy.Info("CREATING DATABASE SESSION")
-	err = dbsrv.Connect(config.Data.URI)
+	dbsession, err := mgo.Dial(config.Data.URI)
 	if err != nil {
 		loggy.Fatal(err)
 	}
-	defer dbsrv.Session.Close()
+	defer dbsession.Close()
 
 	loggy.Info("SETTING UP ROUTING")
-	router, err := routes.Set(config.Data.DbName, dbsrv.Session)
+	router, err := routes.Set(config.Data.DbName, dbsession)
 	if err != nil {
 		loggy.Fatal(err)
 	}
 
 	loggy.Info("STARTING SERVER @ " + config.Server.Address)
-	webserver.Start(config.Server.Address, router)
-	defer webserver.Stop()
+	srvcontrol.StartWebSrvr(config.Server.Address, router)
+}
+
+type configuration struct {
+	ProjectEnv string `json:"projectEnv"`
+	AppName    string `json:"appName"`
+	AppURI     string `json:"appURI"`
+	Version    string `json:"version"`
+	Server     struct {
+		Address string `json:"address"`
+	} `json:"server"`
+	Data struct {
+		URI    string `json:"uri"`
+		DbName string `json:"dbName"`
+	} `json:"data"`
+}
+
+func readConfiguration(path string) (*configuration, error) {
+	c := &configuration{}
+	file, err := ioutil.ReadFile(path)
+	if err != nil {
+		return c, err
+	}
+	err = json.Unmarshal(file, c)
+	if err != nil {
+		return c, err
+	}
+	return c, nil
 }

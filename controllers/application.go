@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -8,7 +9,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/qawarrior/serve-nt/loggy"
+	"github.com/qawarrior/secrets"
+	"github.com/qawarrior/serve-nt/models"
+
+	"github.com/qawarrior/loggy"
 )
 
 // Application represents the controller for operating on the application pages
@@ -58,7 +62,28 @@ func (c Application) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	loggy.Info("HANDLER Application.RegisterPost CALLED")
 	r.ParseForm()
 	loggy.Info(r.Form)
-	json.NewEncoder(w).Encode(r.Form)
+	p := r.FormValue("password")
+	h, err := secrets.HashPassword(p)
+	if err != nil {
+		sendfourOhFour(w, err)
+	}
+
+	m := models.Servee{}
+	m.Email = r.FormValue("email")
+	m.Password = h
+	m.Firstname = r.FormValue("firstname")
+	m.Lastname = r.FormValue("lastname")
+	mb, err := json.Marshal(m)
+	if err != nil {
+		sendfourOhFour(w, err)
+	}
+	resp, err := http.DefaultClient.Post("http://127.0.0.1:8001/api/v1/servees", "application/json", bytes.NewBuffer(mb))
+	if err != nil {
+		sendfourOhFour(w, err)
+	}
+	m.Decode(resp.Body)
+	defer resp.Body.Close()
+	m.Encode(w)
 }
 
 // asset handlers

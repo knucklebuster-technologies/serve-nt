@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/qawarrior/serve-nt/loggy"
+	"github.com/qawarrior/loggy"
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

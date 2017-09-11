@@ -10,7 +10,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/qawarrior/serve-nt/loggy"
+	"github.com/qawarrior/loggy"
 )
 
 // Event represents the controller for operating on the User resource

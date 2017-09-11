@@ -7,7 +7,7 @@ import (
 
 // Servent the person that can take on an event to complete
 type Servent struct {
-	user
+	User
 }
 
 // Encode writes the structs value to a stream

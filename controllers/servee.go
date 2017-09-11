@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/qawarrior/serve-nt/loggy"
+	"github.com/qawarrior/loggy"
 	"github.com/qawarrior/serve-nt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -32,6 +32,7 @@ func NewServee(d *mgo.Database) (*Servee, error) {
 
 // Create adds a new Servee
 func (c Servee) Create(w http.ResponseWriter, r *http.Request) {
+	loggy.Info("HANDLER Servee.Create CALLED")
 	m := models.Servee{}
 	err := m.Decode(r.Body)
 	if err != nil {

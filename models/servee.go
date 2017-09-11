@@ -7,7 +7,7 @@ import (
 
 // Servee the one posting an event that needs to be filled
 type Servee struct {
-	user
+	User
 }
 
 // Encode writes the structs value to a stream
@@ -18,4 +18,9 @@ func (a *Servee) Encode(w io.Writer) error {
 // Decode reads a stream and assigns values to the structs properties
 func (a *Servee) Decode(r io.Reader) error {
 	return json.NewDecoder(r).Decode(a)
+}
+
+// Create will create a DBRecord for this Model
+func (a *Servee) Create(v ...interface{}) (Servee, error) {
+	return *a, nil
 }

@@ -5,19 +5,18 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-const apiVersion = "api/v1"
+const apiVersion = "/api/v1"
+
+var rtr = mux.NewRouter().StrictSlash(true)
+var api = rtr.PathPrefix(apiVersion).Subrouter()
 
 // Set creates router and sets up the applications routes
 func Set(dbname string, db *mgo.Session) (*mux.Router, error) {
-	router := mux.NewRouter().StrictSlash(true)
-
-	// setup api routes
-	apiRouter := router.PathPrefix("/api/v1").Subrouter()
-	servent(dbname, db, apiRouter)
-	servee(dbname, db, apiRouter)
-	event(dbname, db, apiRouter)
+	servent(dbname, db, api)
+	servee(dbname, db, api)
+	event(dbname, db, api)
 
 	// setup page routes
-	application(router)
-	return router, nil
+	application(rtr)
+	return rtr, nil
 }
