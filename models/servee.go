@@ -10,6 +10,9 @@ type Servee struct {
 	User
 }
 
+// NewServee initialize a Servee value
+func NewServee() {}
+
 // Encode writes the structs value to a stream
 func (a *Servee) Encode(w io.Writer) error {
 	return json.NewEncoder(w).Encode(a)

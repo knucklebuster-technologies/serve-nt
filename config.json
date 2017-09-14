@@ -8,6 +8,7 @@
     },
     "data": {
         "uri": "mongodb://localhost",
-        "dbName": "serve-nt"
+        "dbName": "serve-nt",
+        "dbPath": "./datastore"
     }
 }
