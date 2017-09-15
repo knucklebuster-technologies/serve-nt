@@ -7,12 +7,12 @@ import (
 
 func main() {
 
-	m, err := startMongod(configuration.Properties.Data.DbPath)
-	if err != nil {
-		lerror.Fatal(err)
-	}
-	defer m.Process.Kill()
-	linfo.Println("Service mongod has been started")
+	// m, err := startMongod(configuration.Properties.Data.DbPath)
+	// if err != nil {
+	// 	lerror.Fatal(err)
+	// }
+	// defer m.Process.Kill()
+	// linfo.Println("Service mongod has been started")
 
 	router := handlers.GetHandler()
 	linfo.Println("Routes and their handlers have been created")

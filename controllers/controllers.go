@@ -28,6 +28,6 @@ func newIndex(k []string) mgo.Index {
 
 func sendfourOhFour(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
+	w.WriteHeader(404)
 	json.NewEncoder(w).Encode(err)
 }
