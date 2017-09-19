@@ -1,7 +1,10 @@
 package models
 
-import "gopkg.in/mgo.v2/bson"
-import "gopkg.in/mgo.v2"
+import (
+	"github.com/pkg/errors"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
 
 // User basic system user
 type User struct {
@@ -14,9 +17,11 @@ type User struct {
 	ZipCode   int64         `json:"zipCode"  bson:"zip_code"`
 }
 
-// NewUser return an initialized User type
+// NewUser returns an initialized User type
 func NewUser() *User {
 	c := mongoDBSession.Copy().DB(mongoDB).C(`Users`)
+	i := newIndex([]string{`email`})
+	c.EnsureIndex(i)
 	return &User{
 		c: c,
 	}
@@ -24,9 +29,25 @@ func NewUser() *User {
 
 // FindByEmail query the data for a user by email
 func (m *User) FindByEmail() error {
+	if m.Email == `` {
+		return errors.New("User field Email must be valid")
+	}
 	err := m.c.Find(bson.M{"email": m.Email}).One(m)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// Insert adds the data for a user to the collection
+func (m *User) Insert() error {
+	if m.ID != `` || bson.IsObjectIdHex(string(m.ID)) {
+		return errors.New("User is already in the collection")
+	}
+	m.ID = bson.NewObjectId()
+	err := m.c.Insert(m)
+	if err != nil {
+		return errors.Wrap(err, "User data insert failed")
 	}
 	return nil
 }

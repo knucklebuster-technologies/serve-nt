@@ -42,6 +42,8 @@ func GetHandler() http.Handler {
 	return rtr
 }
 
+// SHARED INTERNAL FUNCTIONS
+
 func cssGet(w http.ResponseWriter, r *http.Request) {
 	configuration.Linfo.Println("CSS requested")
 	path := "." + r.URL.Path

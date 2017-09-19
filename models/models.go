@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	// INTERNAL VARIABLES
 	mongoURI       string
 	mongoDB        string
 	mongoDBSession *mgo.Session
@@ -41,6 +42,19 @@ func UpdateDbSession(dburi, dbname string) error {
 // Close cleanup internal state of package
 func Close() {
 	mongoDBSession.Close()
+}
+
+// INTERNAL FUNCTIONS
+
+func newIndex(k []string) mgo.Index {
+	i := mgo.Index{
+		Key:        k,
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+		Sparse:     true,
+	}
+	return i
 }
 
 func checkDBVars() error {

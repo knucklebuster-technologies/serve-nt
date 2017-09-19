@@ -26,5 +26,10 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 		sendfourOhFour(w, err)
 		return
 	}
+	err = user.FindByEmail()
+	if err != nil {
+		sendfourOhFour(w, err)
+		return
+	}
 	json.NewEncoder(w).Encode(user)
 }
