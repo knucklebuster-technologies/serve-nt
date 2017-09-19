@@ -16,7 +16,5 @@ func Set(dbname string, db *mgo.Session) (*mux.Router, error) {
 	servee(dbname, db, api)
 	event(dbname, db, api)
 
-	// setup page routes
-	application(rtr)
 	return rtr, nil
 }

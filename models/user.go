@@ -22,6 +22,11 @@ func NewUser() *User {
 	}
 }
 
-func (m *User) FindByLogin(e, p string) {
-	m.collection.Find(bson.M{"email": e, "password": p}).One(&m)
+// FindByEmail query the data for a user by email
+func (m *User) FindByEmail() error {
+	err := m.c.Find(bson.M{"email": m.Email}).One(m)
+	if err != nil {
+		return err
+	}
+	return nil
 }
