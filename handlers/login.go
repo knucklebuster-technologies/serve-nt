@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/qawarrior/serve-nt/models"
 )
 
 func login(r *mux.Router) {
@@ -19,5 +20,11 @@ func loginGet(w http.ResponseWriter, r *http.Request) {
 
 func loginPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	json.NewEncoder(w).Encode(r.Form)
+	user := models.NewUser()
+	err := fDecoder.Decode(user, r.PostForm)
+	if err != nil {
+		sendfourOhFour(w, err)
+		return
+	}
+	json.NewEncoder(w).Encode(user)
 }

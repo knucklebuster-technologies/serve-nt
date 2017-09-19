@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/pkg/errors"
@@ -11,6 +12,15 @@ import (
 
 // Properties exposes the configuration value
 var Properties *configuration
+
+// Linfo log info
+var Linfo = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+// Lwarn log warn
+var Lwarn = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+// Lerror log error
+var Lerror = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 // configuration is the concrete type of our config.json
 type configuration struct {

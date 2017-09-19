@@ -12,11 +12,11 @@ func main() {
 	// 	lerror.Fatal(err)
 	// }
 	// defer m.Process.Kill()
-	// linfo.Println("Service mongod has been started")
+	// configuration.Linfo.Println("Service mongod has been started")
 
 	router := handlers.GetHandler()
-	linfo.Println("Routes and their handlers have been created")
+	configuration.Linfo.Println("Routes and their handlers have been created")
 
-	linfo.Println("Web server address " + configuration.Properties.Server.Address)
+	configuration.Linfo.Println("Web server address " + configuration.Properties.Server.Address)
 	startWebserver(configuration.Properties.Server.Address, router)
 }
