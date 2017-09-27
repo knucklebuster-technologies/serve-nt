@@ -1,47 +1,38 @@
 package handlers
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/qawarrior/secrets"
 	"github.com/qawarrior/serve-nt/models"
 )
 
-func registration(r *mux.Router) {
-	r.HandleFunc("/registration", registrationGet).Methods("GET")
-	r.HandleFunc("/registration", registrationPost).Methods("POST")
-}
-
 func registrationGet(w http.ResponseWriter, r *http.Request) {
-	serveTemplate("./assets/templates/registration.html", time.Now().String(), w)
+	serveTemplate("./assets/templates/registration.html", tempdata{Timestamp: time.Now(), AppName: "SERVE-NT"}, w)
 }
 
 func registrationPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	p := r.FormValue("password")
-	h, err := secrets.HashPassword(p)
+
+	m := models.NewUser()
+	err := fDecoder.Decode(m, r.PostForm)
 	if err != nil {
 		sendfourOhFour(w, err)
+		return
 	}
 
-	m := models.Servee{}
-	m.Email = r.FormValue("email")
+	h, err := secrets.HashPassword(m.Password)
+	if err != nil {
+		sendfourOhFour(w, err)
+		return
+	}
 	m.Password = h
-	m.Firstname = r.FormValue("firstname")
-	m.Lastname = r.FormValue("lastname")
-	mb, err := json.Marshal(m)
+	err = m.Insert()
 	if err != nil {
 		sendfourOhFour(w, err)
+		return
 	}
-	resp, err := http.DefaultClient.Post("http://127.0.0.1:8001/api/v1/servees", "application/json", bytes.NewBuffer(mb))
-	if err != nil {
-		sendfourOhFour(w, err)
-	}
-	m.Decode(resp.Body)
-	defer resp.Body.Close()
-	m.Encode(w)
+	json.NewEncoder(w).Encode(m)
 }
