@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/qawarrior/serve-nt/configuration"
+	"github.com/qawarrior/serve-nt/models"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
@@ -14,13 +15,17 @@ import (
 const apiVersion = "/api/v1"
 
 var (
+	cfg          *configuration.Config
 	fDecoder     = schema.NewDecoder()
 	storeKey     = "Serving Neighbors Transportation"
 	sessionStore = sessions.NewCookieStore([]byte(storeKey))
 )
 
-// GetHandler returns the route handler for this application
-func GetHandler() http.Handler {
+// New return the router for the application
+func New(c *configuration.Config) http.Handler {
+	// setup the models package for use with the handlers
+	models.Init(c)
+
 	// rtr is the root application router
 	rtr := mux.NewRouter().StrictSlash(true)
 	rtr.HandleFunc("/", indexGet)
@@ -40,6 +45,9 @@ func GetHandler() http.Handler {
 	api := rtr.PathPrefix(apiVersion).Subrouter()
 	api.HandleFunc("/users", getUsers).Methods(http.MethodGet)
 
+	// set config for package
+	cfg = c
+
 	// return base router rtr to the caller
 	return rtr
 }
@@ -48,21 +56,21 @@ func GetHandler() http.Handler {
 
 func cssGet(w http.ResponseWriter, r *http.Request) {
 	path := "." + r.URL.Path
-	configuration.Linfo.Println("Serving css -", path)
+	cfg.Logger.Info.Println("Serving css -", path)
 	http.ServeFile(w, r, path)
 }
 
 func jsGet(w http.ResponseWriter, r *http.Request) {
 	path := "." + r.URL.Path
-	configuration.Linfo.Println("Serving js -", path)
+	cfg.Logger.Info.Println("Serving js -", path)
 	http.ServeFile(w, r, path)
 }
 
 func serveTemplate(t string, d interface{}, w http.ResponseWriter) {
-	configuration.Linfo.Println("Serving template -", t)
+	cfg.Logger.Info.Println("Serving template -", t)
 	pt, err := template.ParseFiles(t)
 	if err != nil {
-		configuration.Lerror.Println("Failed to parse template:", t, "error:", err)
+		cfg.Logger.Error.Println("Failed to parse template:", t, "error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

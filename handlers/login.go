@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/qawarrior/serve-nt/configuration"
-
 	"github.com/qawarrior/secrets"
 
 	"github.com/qawarrior/serve-nt/models"
@@ -32,7 +30,7 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 	// Try to retrieve existing user
 	err = user.FindByEmail()
 	if err != nil {
-		configuration.Lerror.Println("User does not Exist")
+		cfg.Logger.Error.Println("User does not Exist")
 		http.Redirect(w, r, "/registration", 200)
 		return
 	}
@@ -69,6 +67,6 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginError(w http.ResponseWriter, r *http.Request, err error) {
-	configuration.Lerror.Println("Login Failed:", err)
+	cfg.Logger.Error.Println("Login Failed:", err)
 	http.Redirect(w, r, "/login", 200)
 }

@@ -3,12 +3,15 @@ package main
 import (
 	"net/http"
 	"time"
+
+	"github.com/qawarrior/serve-nt/configuration"
+	"github.com/qawarrior/serve-nt/handlers"
 )
 
-func startWebserver(addr string, hndlr http.Handler) error {
+func startServer(c *configuration.Config) error {
 	wsrvr := &http.Server{
-		Handler:      hndlr,
-		Addr:         addr,
+		Handler:      handlers.New(c),
+		Addr:         c.Server.Address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

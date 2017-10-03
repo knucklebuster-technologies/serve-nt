@@ -6,9 +6,8 @@
     "server": {
         "address": "127.0.0.1:3001"
     },
-    "data": {
+    "database": {
         "uri": "mongodb://localhost",
-        "dbName": "serve-nt",
-        "dbPath": "./datastore"
+        "name": "serve-nt"
     }
 }

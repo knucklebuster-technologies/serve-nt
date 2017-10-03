@@ -19,7 +19,7 @@ type User struct {
 
 // NewUser returns an initialized User type
 func NewUser() *User {
-	c := mongoDBSession.Copy().DB(mongoDB).C(`Users`)
+	c := mongo.Copy().DB(cfg.Database.Name).C("users")
 	i := newIndex([]string{`email`})
 	c.EnsureIndex(i)
 	return &User{

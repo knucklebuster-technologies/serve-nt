@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,20 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Properties exposes the configuration value
-var Properties *configuration
-
-// Linfo log info
-var Linfo = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-// Lwarn log warn
-var Lwarn = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-// Lerror log error
-var Lerror = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-// configuration is the concrete type of our config.json
-type configuration struct {
+// Config is the concrete type of our config.json
+type Config struct {
 	ProjectEnv string `json:"projectEnv"`
 	AppName    string `json:"appName"`
 	AppURI     string `json:"appURI"`
@@ -31,37 +18,31 @@ type configuration struct {
 	Server     struct {
 		Address string `json:"address"`
 	} `json:"server"`
-	Data struct {
-		URI    string `json:"uri"`
-		DbName string `json:"dbName"`
-		DbPath string `json:"dbPath`
-	} `json:"data"`
+	Database struct {
+		URI  string `json:"uri"`
+		Name string `json:"name"`
+	} `json:"database"`
+	Logger struct {
+		Info  *log.Logger
+		Warn  *log.Logger
+		Error *log.Logger
+	} `json:"-"`
 }
 
-func init() {
-	wd, err := os.Getwd()
+func FromFile(path string) (*Config, error) {
+	file, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed Getting Working Directory - Error:"+err.Error())
-		return
-	}
-	err = Update(wd + `/config.json`)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to initialize configuration.Properties - Error:"+err.Error())
-	}
-}
-
-// Update changes configuration.Properties using values from the filepath
-func Update(filepath string) error {
-	c := &configuration{}
-	file, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		return errors.Wrap(err, "Reading the configuration failed - path:"+filepath)
+		return nil, errors.Wrap(err, "Reading the configuration failed - path:"+path)
 	}
 
+	c := &Config{}
 	err = json.Unmarshal(file, c)
 	if err != nil {
-		return errors.Wrap(err, "failed to update configuration properties - path:"+filepath)
+		return nil, errors.Wrap(err, "failed to update configuration properties - path:"+path)
 	}
-	Properties = c
-	return nil
+	c.Logger.Info = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	c.Logger.Warn = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	c.Logger.Error = log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	return c, nil
 }

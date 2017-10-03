@@ -1,47 +1,22 @@
 package models
 
 import (
-	"errors"
-	"log"
-
 	"github.com/qawarrior/serve-nt/configuration"
 	"gopkg.in/mgo.v2"
 )
 
-var (
-	// INTERNAL VARIABLES
-	mongoURI       string
-	mongoDB        string
-	mongoDBSession *mgo.Session
-)
+var cfg *configuration.Config
+var mongo *mgo.Session
 
-// Collector any type that can return its mongo db collection
-type Collector interface {
-	Collection() *mgo.Collection
-}
-
-func init() {
-	err := UpdateDbSession(configuration.Properties.Data.URI, configuration.Properties.Data.DbName)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// UpdateDbSession sets internal state used by all models
-func UpdateDbSession(dburi, dbname string) error {
-	mongoURI = dburi
-	mongoDB = dbname
-	s, err := mgo.Dial(mongoURI)
+// Init sets up the models package for data processing
+func Init(c *configuration.Config) error {
+	m, err := mgo.Dial(c.Database.URI)
 	if err != nil {
 		return err
 	}
-	mongoDBSession = s
+	mongo = m
+	cfg = c
 	return nil
-}
-
-// Close cleanup internal state of package
-func Close() {
-	mongoDBSession.Close()
 }
 
 // INTERNAL FUNCTIONS
@@ -55,11 +30,4 @@ func newIndex(k []string) mgo.Index {
 		Sparse:     true,
 	}
 	return i
-}
-
-func checkDBVars() error {
-	if mongoDB == `` || mongoURI == `` || mongoDBSession == nil {
-		return errors.New("UpdateDbSession must be called before models can function")
-	}
-	return nil
 }
