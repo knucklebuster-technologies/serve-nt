@@ -66,7 +66,7 @@ func jsGet(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, path)
 }
 
-func serveTemplate(t string, d interface{}, w http.ResponseWriter) {
+func serveTemplate(w http.ResponseWriter, t string, d interface{}) {
 	cfg.Logger.Info.Println("Serving template -", t)
 	pt, err := template.ParseFiles(t)
 	if err != nil {
@@ -79,4 +79,8 @@ func serveTemplate(t string, d interface{}, w http.ResponseWriter) {
 
 func sendfourOhFour(w http.ResponseWriter, err error) {
 	http.Error(w, err.Error(), 404)
+}
+
+func authenicated(r *http.Request) bool {
+	return true
 }

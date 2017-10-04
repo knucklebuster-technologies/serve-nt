@@ -14,7 +14,7 @@ type User struct {
 	Password  string        `json:"password"  bson:"password"`
 	Firstname string        `json:"firstname" bson:"firstname"`
 	Lastname  string        `json:"lastname" bson:"lastname"`
-	ZipCode   int64         `json:"zipCode"  bson:"zip_code"`
+	ZipCode   int64         `json:"zipcode"  bson:"zipcode"`
 }
 
 // NewUser returns an initialized User type
@@ -33,6 +33,18 @@ func (m *User) FindByEmail() error {
 		return errors.New("User field Email must be valid")
 	}
 	err := m.c.Find(bson.M{"email": m.Email}).One(m)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// FindByID query the data for a user by id
+func (m *User) FindByID() error {
+	if m.ID == "" {
+		return errors.New("User ID field must be valid")
+	}
+	err := m.c.Find(bson.M{"_id": m.ID}).One(m)
 	if err != nil {
 		return err
 	}

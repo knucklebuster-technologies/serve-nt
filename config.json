@@ -1,6 +1,6 @@
 {
     "projectEnv": "development",
-    "appName": "serve-nt",
+    "appName": "SERVENT",
     "appURI": "https://github.com/qawarrior/serve-nt",
     "version": "v0.0.1-alpha",
     "server": {

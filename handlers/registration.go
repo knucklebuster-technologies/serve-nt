@@ -10,7 +10,11 @@ import (
 )
 
 func registrationGet(w http.ResponseWriter, r *http.Request) {
-	serveTemplate("./assets/templates/registration.html", tempdata{Timestamp: time.Now(), AppName: "SERVE-NT"}, w)
+	p := pagedata{
+		Timestamp: time.Now(),
+		AppName:   cfg.AppName,
+	}
+	serveTemplate(w, "./assets/templates/registration.html", p)
 }
 
 func registrationPost(w http.ResponseWriter, r *http.Request) {

@@ -11,7 +11,11 @@ import (
 )
 
 func loginGet(w http.ResponseWriter, r *http.Request) {
-	serveTemplate("./assets/templates/login.html", tempdata{Timestamp: time.Now(), AppName: "SERVE-NT"}, w)
+	p := pagedata{
+		Timestamp: time.Now(),
+		AppName:   cfg.AppName,
+	}
+	serveTemplate(w, "./assets/templates/login.html", p)
 }
 
 func loginPost(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +35,7 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 	err = user.FindByEmail()
 	if err != nil {
 		cfg.Logger.Error.Println("User does not Exist")
-		http.Redirect(w, r, "/registration", 200)
+		http.Redirect(w, r, "/registration", http.StatusSeeOther)
 		return
 	}
 
@@ -63,10 +67,10 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rurl := `/profile/` + user.ID.Hex()
-	http.Redirect(w, r, rurl, 200)
+	http.Redirect(w, r, rurl, http.StatusSeeOther)
 }
 
 func loginError(w http.ResponseWriter, r *http.Request, err error) {
 	cfg.Logger.Error.Println("Login Failed:", err)
-	http.Redirect(w, r, "/login", 200)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
