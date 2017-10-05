@@ -55,8 +55,8 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 
 	// If session is new, set values
 	if session.IsNew {
-		session.Values["UserId"] = user.ID.String()
-		session.Values["LoggedIn"] = true
+		session.Values["id"] = user.ID.Hex()
+		session.Values["authenticated"] = true
 	}
 
 	// Save session back to client

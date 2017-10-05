@@ -82,5 +82,11 @@ func sendfourOhFour(w http.ResponseWriter, err error) {
 }
 
 func authenicated(r *http.Request) bool {
+	session, _ := sessionStore.Get(r, "SNT-SESSION")
+
+	// Check if user is authenticated
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		return false
+	}
 	return true
 }
