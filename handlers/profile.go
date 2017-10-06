@@ -11,6 +11,11 @@ import (
 )
 
 func profileidGet(w http.ResponseWriter, r *http.Request) {
+	if !authenicated(r) {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
 	// obtain and validate the id
 	id := mux.Vars(r)["id"]
 	if bson.IsObjectIdHex(id) == false {
@@ -22,7 +27,7 @@ func profileidGet(w http.ResponseWriter, r *http.Request) {
 	// create user and find by id
 	u := models.NewUser()
 	u.ID = bson.ObjectIdHex(id)
-	err := u.FindByID()
+	err := u.Find(map[string]interface{}{"_id": u.ID})
 	if err != nil {
 		cfg.Logger.Error.Println(err)
 		http.Error(w, "User not foumd", http.StatusUnauthorized)

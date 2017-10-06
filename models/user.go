@@ -27,28 +27,9 @@ func NewUser() *User {
 	}
 }
 
-// FindByEmail query the data for a user by email
-func (m *User) FindByEmail() error {
-	if m.Email == `` {
-		return errors.New("User field Email must be valid")
-	}
-	err := m.c.Find(bson.M{"email": m.Email}).One(m)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// FindByID query the data for a user by id
-func (m *User) FindByID() error {
-	if m.ID == "" {
-		return errors.New("User ID field must be valid")
-	}
-	err := m.c.Find(bson.M{"_id": m.ID}).One(m)
-	if err != nil {
-		return err
-	}
-	return nil
+// Find takes a standard mongo map for a query
+func (m *User) Find(q map[string]interface{}) error {
+	return m.c.Find(q).One(m)
 }
 
 // Insert adds the data for a user to the collection

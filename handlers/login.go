@@ -32,7 +32,7 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 	txtPwd := user.Password
 
 	// Try to retrieve existing user
-	err = user.FindByEmail()
+	err = user.Find(map[string]interface{}{"email": user.Email})
 	if err != nil {
 		cfg.Logger.Error.Println("User does not Exist")
 		http.Redirect(w, r, "/registration", http.StatusSeeOther)
@@ -55,7 +55,6 @@ func loginPost(w http.ResponseWriter, r *http.Request) {
 
 	// If session is new, set values
 	if session.IsNew {
-		session.Values["id"] = user.ID.Hex()
 		session.Values["authenticated"] = true
 	}
 

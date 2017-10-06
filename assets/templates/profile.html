@@ -14,22 +14,28 @@
         <h1><a href="/">{{.AppName}}</a></h1>
         <h2>Serving Neighbors Transportation</h2>
     </div>
+    <div id="user-data">
+    </div>
     <div class="profile-page">
         <div class="data-form">
-            <table>
-                <tr>
-                    <td class="td-label">First Name:</td>
-                    <td class="td-data">{{.Firstname}}</td>
-                </tr>
-                <tr>
-                    <td>Last Name:</td>
-                    <td>{{.Lastname}}</td>
-                </tr>
-                <tr>
-                    <td>Email:</td>
-                    <td>{{.Email}}</td>
-                </tr>
-            </table>
+            <script>
+                document.querySelector('users-data').onclick = makeRequest;
+
+                function makeRequest() {
+                    // create a  XMLHttpRequest
+                    var xhr = new XMLHttpRequest();
+                    // open the request
+                    xhr.open('GET', '/users');
+                    // handles the response
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            alert(xhr.responseText);
+                        }
+                    };
+                    // send the request
+                    xhr.send();
+                }
+            </script>
         </div>
     </div>
 </body>
