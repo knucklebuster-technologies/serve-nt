@@ -10,7 +10,12 @@ import (
 	"github.com/qawarrior/serve-nt/models"
 )
 
-func profileidGet(w http.ResponseWriter, r *http.Request) {
+type profile struct {
+	users  *models.UsersCollection
+	events *models.EventsCollection
+}
+
+func (h *profile) get(w http.ResponseWriter, r *http.Request) {
 	if !authenicated(r) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -24,13 +29,11 @@ func profileidGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// create user and find by id
-	u := models.NewUser()
-	u.ID = bson.ObjectIdHex(id)
-	err := u.Find(map[string]interface{}{"_id": u.ID})
+	oid := bson.ObjectIdHex(id)
+	u, err := h.users.FindOne(map[string]interface{}{"_id": oid})
 	if err != nil {
 		cfg.Logger.Error.Println(err)
-		http.Error(w, "User not foumd", http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 

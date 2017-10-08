@@ -9,7 +9,11 @@ import (
 	"github.com/qawarrior/serve-nt/models"
 )
 
-func registrationGet(w http.ResponseWriter, r *http.Request) {
+type registration struct {
+	collection *models.UsersCollection
+}
+
+func (h *registration) get(w http.ResponseWriter, r *http.Request) {
 	p := pagedata{
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
@@ -17,26 +21,27 @@ func registrationGet(w http.ResponseWriter, r *http.Request) {
 	serveTemplate(w, "./assets/templates/registration.html", p)
 }
 
-func registrationPost(w http.ResponseWriter, r *http.Request) {
+func (h *registration) post(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-
-	m := models.NewUser()
-	err := fDecoder.Decode(m, r.PostForm)
+	u := &models.User{}
+	err := fDecoder.Decode(u, r.PostForm)
 	if err != nil {
-		sendfourOhFour(w, err)
+		cfg.Logger.Error.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	h, err := secrets.HashPassword(m.Password)
+	pwd, err := secrets.HashPassword(u.Password)
 	if err != nil {
-		sendfourOhFour(w, err)
+		cfg.Logger.Error.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	m.Password = h
-	err = m.Insert()
+	u.Password = pwd
+	u, err = h.collection.Insert(u)
 	if err != nil {
-		sendfourOhFour(w, err)
+		cfg.Logger.Error.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(m)
+	json.NewEncoder(w).Encode(u)
 }
