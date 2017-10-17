@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"gopkg.in/mgo.v2"
@@ -15,7 +15,7 @@ type User struct {
 	ZipCode   int64         `json:"zipcode"  bson:"zipcode"`
 }
 
-// UsersCollection type for managing the events collection
+// UsersCollection type for managing the users collection
 type UsersCollection struct {
 	data *mgo.Collection
 }

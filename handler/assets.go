@@ -1,18 +1,20 @@
-package handlers
+package handler
 
 import (
 	"html/template"
 	"net/http"
 )
 
+type assets struct{}
+
 // SHARED INTERNAL FUNCTIONS
-func cssGet(w http.ResponseWriter, r *http.Request) {
+func (h *assets) css(w http.ResponseWriter, r *http.Request) {
 	path := "." + r.URL.Path
 	cfg.Logger.Info.Println("Serving css -", path)
 	http.ServeFile(w, r, path)
 }
 
-func jsGet(w http.ResponseWriter, r *http.Request) {
+func (h *assets) js(w http.ResponseWriter, r *http.Request) {
 	path := "." + r.URL.Path
 	cfg.Logger.Info.Println("Serving js -", path)
 	http.ServeFile(w, r, path)
@@ -27,10 +29,6 @@ func serveTemplate(w http.ResponseWriter, t string, d interface{}) {
 		return
 	}
 	pt.Execute(w, d)
-}
-
-func sendfourOhFour(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), 404)
 }
 
 func authenicated(r *http.Request) bool {

@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"net/http"
@@ -7,12 +7,12 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/gorilla/mux"
-	"github.com/qawarrior/serve-nt/models"
+	"github.com/qawarrior/serve-nt/model"
 )
 
 type profile struct {
-	users  *models.UsersCollection
-	events *models.EventsCollection
+	users  *model.UsersCollection
+	events *model.EventsCollection
 }
 
 func (h *profile) get(w http.ResponseWriter, r *http.Request) {
@@ -36,12 +36,12 @@ func (h *profile) get(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-
-	p := profiledata{
-		pagedata{
-			Timestamp: time.Now(),
-			AppName:   cfg.AppName,
-		},
+	page := model.PageData{
+		Timestamp: time.Now(),
+		AppName:   cfg.AppName,
+	}
+	p := model.ProfileData{
+		page,
 		*u,
 	}
 	serveTemplate(w, "./assets/templates/profile.html", p)

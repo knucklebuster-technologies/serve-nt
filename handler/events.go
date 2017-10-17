@@ -1,14 +1,14 @@
-package handlers
+package handler
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/qawarrior/serve-nt/models"
+	"github.com/qawarrior/serve-nt/model"
 )
 
 type events struct {
-	collection *models.EventsCollection
+	collection *model.EventsCollection
 }
 
 func (h *events) get(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +32,7 @@ func (h *events) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *events) post(w http.ResponseWriter, r *http.Request) {
-	m := &models.Event{}
+	m := &model.Event{}
 
 	defer r.Body.Close()
 	err := json.NewDecoder(r.Body).Decode(m)

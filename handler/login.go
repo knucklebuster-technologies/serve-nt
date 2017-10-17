@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"errors"
@@ -7,15 +7,15 @@ import (
 
 	"github.com/qawarrior/secrets"
 
-	"github.com/qawarrior/serve-nt/models"
+	"github.com/qawarrior/serve-nt/model"
 )
 
 type login struct {
-	users *models.UsersCollection
+	users *model.UsersCollection
 }
 
 func (h *login) get(w http.ResponseWriter, r *http.Request) {
-	p := pagedata{
+	p := model.PageData{
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
@@ -24,7 +24,7 @@ func (h *login) get(w http.ResponseWriter, r *http.Request) {
 
 func (h *login) post(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	u := &models.User{}
+	u := &model.User{}
 	err := fDecoder.Decode(u, r.PostForm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

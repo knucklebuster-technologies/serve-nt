@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"encoding/json"
@@ -6,15 +6,15 @@ import (
 	"time"
 
 	"github.com/qawarrior/secrets"
-	"github.com/qawarrior/serve-nt/models"
+	"github.com/qawarrior/serve-nt/model"
 )
 
 type registration struct {
-	collection *models.UsersCollection
+	users *model.UsersCollection
 }
 
 func (h *registration) get(w http.ResponseWriter, r *http.Request) {
-	p := pagedata{
+	p := model.PageData{
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
@@ -23,7 +23,7 @@ func (h *registration) get(w http.ResponseWriter, r *http.Request) {
 
 func (h *registration) post(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	u := &models.User{}
+	u := &model.User{}
 	err := fDecoder.Decode(u, r.PostForm)
 	if err != nil {
 		cfg.Logger.Error.Println(err)
@@ -37,7 +37,7 @@ func (h *registration) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u.Password = pwd
-	u, err = h.collection.Insert(u)
+	u, err = h.users.Insert(u)
 	if err != nil {
 		cfg.Logger.Error.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
