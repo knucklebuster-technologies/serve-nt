@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -19,7 +20,11 @@ func (h *login) get(w http.ResponseWriter, r *http.Request) {
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
-	serveTemplate(w, "./assets/templates/login.html", p)
+	tpl, err := template.ParseFiles("./assets/templates/_layout.html", "./assets/templates/login.html")
+	if err != nil {
+		return
+	}
+	tpl.ExecuteTemplate(w, "_layout", p)
 }
 
 func (h *login) post(w http.ResponseWriter, r *http.Request) {

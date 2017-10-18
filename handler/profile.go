@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 	"time"
 
@@ -44,5 +45,9 @@ func (h *profile) get(w http.ResponseWriter, r *http.Request) {
 		page,
 		*u,
 	}
-	serveTemplate(w, "./assets/templates/profile.html", p)
+	tpl, err := template.ParseFiles("./assets/templates/_layout.html", "./assets/templates/profile.html")
+	if err != nil {
+		return
+	}
+	tpl.ExecuteTemplate(w, "_layout", p)
 }

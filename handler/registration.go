@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -18,7 +19,11 @@ func (h *registration) get(w http.ResponseWriter, r *http.Request) {
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
-	serveTemplate(w, "./assets/templates/registration.html", p)
+	tpl, err := template.ParseFiles("./assets/templates/_layout.html", "./assets/templates/registration.html")
+	if err != nil {
+		return
+	}
+	tpl.ExecuteTemplate(w, "_layout", p)
 }
 
 func (h *registration) post(w http.ResponseWriter, r *http.Request) {

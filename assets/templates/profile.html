@@ -1,45 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+{{define "body"}}
+<div class="heading">
+    <h1><a href="/">{{.AppName}}</a></h1>
+    <h2>Serving Neighbors Transportation</h2>
+</div>
+<div id="user-data">
+    <h4>FIRST NAME: {{.Firstname}}</h4>
+    <h4>LAST NAME: {{.Lastname}}</h4>
+</div>
+<div class="profile-page">
+    <div class="data-form">
+        <script>
+            document.querySelector('users-data').onclick = makeRequest;
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{.AppName}} Home</title>
-    <link rel="stylesheet" href="/assets/css/style.css?{{.Timestamp}}">
-</head>
-
-<body>
-    <div class="heading">
-        <h1><a href="/">{{.AppName}}</a></h1>
-        <h2>Serving Neighbors Transportation</h2>
+            function makeRequest() {
+                // create a  XMLHttpRequest
+                var xhr = new XMLHttpRequest();
+                // open the request
+                xhr.open('GET', '/users');
+                // handles the response
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        alert(xhr.responseText);
+                    }
+                };
+                // send the request
+                xhr.send();
+            }
+        </script>
     </div>
-    <div id="user-data">
-        <h4>FIRST NAME: {{.Firstname}}</h4>
-        <h4>LAST NAME: {{.Lastname}}</h4>
-    </div>
-    <div class="profile-page">
-        <div class="data-form">
-            <script>
-                document.querySelector('users-data').onclick = makeRequest;
-
-                function makeRequest() {
-                    // create a  XMLHttpRequest
-                    var xhr = new XMLHttpRequest();
-                    // open the request
-                    xhr.open('GET', '/users');
-                    // handles the response
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            alert(xhr.responseText);
-                        }
-                    };
-                    // send the request
-                    xhr.send();
-                }
-            </script>
-        </div>
-    </div>
-</body>
-
-</html>
+</div>
+{{end}}

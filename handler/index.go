@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 	"time"
 
@@ -14,5 +15,9 @@ func (h *index) get(w http.ResponseWriter, r *http.Request) {
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
-	serveTemplate(w, "./assets/templates/index.html", p)
+	tpl, err := template.ParseFiles("./assets/templates/_layout.html", "./assets/templates/index.html")
+	if err != nil {
+		return
+	}
+	tpl.ExecuteTemplate(w, "_layout", p)
 }
