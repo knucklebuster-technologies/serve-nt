@@ -10,6 +10,7 @@ type PageData struct {
 
 // ProfileData composite structure used in profile template
 type ProfileData struct {
-	PageData
-	User
+	PageData PageData
+	User     User
+	Events   *[]Event
 }

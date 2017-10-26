@@ -58,6 +58,7 @@ func (h *login) post(w http.ResponseWriter, r *http.Request) {
 
 	if session.IsNew {
 		session.Values["authenticated"] = true
+		session.Values["userid"] = u.ID.Hex()
 	}
 	err = session.Save(r, w)
 	if err != nil {

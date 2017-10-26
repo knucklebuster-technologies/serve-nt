@@ -1,32 +1,24 @@
 {{define "body"}}
 <div class="heading">
-    <h1><a href="/">{{.AppName}}</a></h1>
+    <h1><a href="/">{{.PageData.AppName}}</a></h1>
     <h2>Serving Neighbors Transportation</h2>
 </div>
 <div id="user-data">
-    <h4>FIRST NAME: {{.Firstname}}</h4>
-    <h4>LAST NAME: {{.Lastname}}</h4>
+    <h4>FIRST NAME: {{.User.Firstname}}</h4>
+    <h4>LAST NAME: {{.User.Lastname}}</h4>
 </div>
-<div class="profile-page">
-    <div class="data-form">
-        <script>
-            document.querySelector('users-data').onclick = makeRequest;
-
-            function makeRequest() {
-                // create a  XMLHttpRequest
-                var xhr = new XMLHttpRequest();
-                // open the request
-                xhr.open('GET', '/users');
-                // handles the response
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        alert(xhr.responseText);
-                    }
-                };
-                // send the request
-                xhr.send();
-            }
-        </script>
+<div class="login-page">
+    <div class="form">
+        <ul>
+            <li>NO EVENTS YET</li>
+        </ul>
+    </div>
+</div>
+<div class="login-page">
+    <div class="form">
+        <form class="login-form" action="/event" method="get">
+            <button>Add An Event</button>
+        </form>
     </div>
 </div>
 {{end}}

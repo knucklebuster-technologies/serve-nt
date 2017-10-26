@@ -38,3 +38,8 @@ func authenicated(r *http.Request) bool {
 	}
 	return true
 }
+
+func getid(r *http.Request) string {
+	session, _ := sessionStore.Get(r, "SNT-SESSION")
+	return session.Values["userid"].(string)
+}

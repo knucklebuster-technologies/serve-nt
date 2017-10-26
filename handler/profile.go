@@ -41,12 +41,24 @@ func (h *profile) get(w http.ResponseWriter, r *http.Request) {
 		Timestamp: time.Now(),
 		AppName:   cfg.AppName,
 	}
+
+	evts, err := h.events.Find(map[string]interface{}{
+		"serveeid": oid,
+	})
+	if err != nil {
+		cfg.Logger.Error.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	p := model.ProfileData{
-		page,
-		*u,
+		PageData: page,
+		User:     *u,
+		Events:   evts,
 	}
 	tpl, err := template.ParseFiles("./assets/templates/_layout.html", "./assets/templates/profile.html")
 	if err != nil {
+		cfg.Logger.Error.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	tpl.ExecuteTemplate(w, "_layout", p)

@@ -10,8 +10,8 @@ type Event struct {
 	ID          bson.ObjectId `json:"id"  bson:"_id"`
 	Title       string        `json:"title"  bson:"title"`
 	Description string        `json:"description"  bson:"description"`
-	ServeeID    bson.ObjectId `json:"serveeid" bson:"serveeid"`
-	ServentID   bson.ObjectId `json:"serventid, omitempty" bson:"serventid, omitempty"`
+	ServeeID    string        `json:"serveeid" bson:"serveeid"`
+	ServentID   string        `json:"serventid" bson:"serventid"`
 }
 
 // EventsCollection type for managing the events collection

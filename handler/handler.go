@@ -35,6 +35,7 @@ func New(c *configuration.Config) http.Handler {
 	rtr.HandleFunc("/", i.get)
 
 	ucol := model.NewUsersCollection()
+	ecol := model.NewEventsCollection()
 	l := login{users: ucol}
 	rtr.HandleFunc("/login", l.get).Methods(http.MethodGet)
 	rtr.HandleFunc("/login", l.post).Methods(http.MethodPost)
@@ -43,8 +44,12 @@ func New(c *configuration.Config) http.Handler {
 	rtr.HandleFunc("/registration", r.get).Methods(http.MethodGet)
 	rtr.HandleFunc("/registration", r.post).Methods(http.MethodPost)
 
-	p := profile{users: ucol, events: model.NewEventsCollection()}
+	p := profile{users: ucol, events: ecol}
 	rtr.HandleFunc("/profile/{id}", p.get).Methods(http.MethodGet)
+
+	e := event{events: ecol}
+	rtr.HandleFunc("/event", e.get).Methods(http.MethodGet)
+	rtr.HandleFunc("/event", e.post).Methods(http.MethodPost)
 
 	a := assets{}
 	rtr.HandleFunc("/assets/css/{file}", a.css).Methods(http.MethodGet)
@@ -54,9 +59,9 @@ func New(c *configuration.Config) http.Handler {
 	api := rtr.PathPrefix(apiVersion).Subrouter()
 
 	// handles for api endpoint events
-	e := events{collection: model.NewEventsCollection()}
-	api.HandleFunc("/events", e.post).Methods(http.MethodPost)
-	api.HandleFunc("/events", e.get).Methods(http.MethodGet)
+	es := events{collection: ecol}
+	api.HandleFunc("/events", es.post).Methods(http.MethodPost)
+	api.HandleFunc("/events", es.get).Methods(http.MethodGet)
 
 	// api handlers for users endpoint
 	api.HandleFunc("/users", getUsers).Methods(http.MethodGet)
